@@ -1,72 +1,99 @@
-#include <stdlib.h>
 #include <stdio.h>
 #include "sandpiles.h"
 
-
-void print_grid(int grid[3][3])
+/**
+ * print_grid - Affiche une grille 3x3
+ * @grid: La grille 3x3
+ */
+static void print_grid(int grid[3][3])
 {
-    int i, j;
+	int i, j;
 
-    printf("=\n");
-
-    for (i = 0; i < 3; i++)
-    {
-        for (j = 0; j < 3; j++)
-        {
-            if (j)
-                printf(" ");
-            printf("%d", grid[i][j]);
-        }
-        printf("\n");
-    }
+	printf("=\n");
+	for (i = 0; i < 3; i++)
+	{
+		for (j = 0; j < 3; j++)
+		{
+			if (j)
+				printf(" ");
+			printf("%d", grid[i][j]);
+		}
+		printf("\n");
+	}
 }
 
-void add_grid(int grid1[3][3], int grid2[3][3])
+/**
+ * is_stable - Vérifie si une grille est stable
+ * @grid: La grille 3x3
+ *
+ * Return: 1 si stable, 0 sinon
+ */
+static int is_stable(int grid[3][3])
 {
-    int i, j;
+	int i, j;
 
-    for (i = 0; i < 3; i++)
-    {
-        for (j = 0; j < 3; j++)
-        {
-            grid1[i][j] += grid2[i][j];
-        }
-    }
+	for (i = 0; i < 3; i++)
+	{
+		for (j = 0; j < 3; j++)
+		{
+			if (grid[i][j] > 3)
+				return (0);
+		}
+	}
+	return (1);
 }
 
-void sandpiles_sum(int grid1[3][3], int grid2[3][3]) 
+/**
+ * topple - Répartit les grains de sable
+ * @grid: La grille 3x3
+ */
+static void topple(int grid[3][3])
 {
-    int i, j;
+	int i, j;
+	int grid_tmp[3][3] = {0};
 
-    add_grid(grid1, grid2);
-    while (grid1[0][0] > 3 || grid1[0][1] > 3 || grid1[0][2] > 3 ||
-           grid1[1][0] > 3 || grid1[1][1] > 3 || grid1[1][2] > 3 ||
-           grid1[2][0] > 3 || grid1[2][1] > 3 || grid1[2][2] > 3)
-    {
-        int temp[3][3] = {0};
-        for (i = 0; i < 3; i++)
-        {
-            for (j = 0; j < 3; j++)
-            {
-                if (grid1[i][j] > 3)
-                {
-                    temp[i][j] -= 4;
-                    if (i > 0)
-                        temp[i - 1][j]++;
-                    if (i < 2)
-                        temp[i + 1][j]++;
-                    if (j > 0)
-                        temp[i][j - 1]++;
-                    if (j < 2)
-                        temp[i][j + 1]++;
+	for (i = 0; i < 3; i++)
+	{
+		for (j = 0; j < 3; j++)
+		{
+			if (grid[i][j] > 3)
+			{
+				grid_tmp[i][j] -= 4; // Enlever 4 grains de sable
+				if (i > 0)
+					grid_tmp[i - 1][j]++;
+				if (i < 2)
+					grid_tmp[i + 1][j]++;
+				if (j > 0)
+					grid_tmp[i][j - 1]++;
+				if (j < 2)
+					grid_tmp[i][j + 1]++;
+			}
+		}
+	}
 
-                }
+	for (i = 0; i < 3; i++)
+		for (j = 0; j < 3; j++)
+			grid[i][j] += grid_tmp[i][j];
+}
 
-            }
-            
-        }
-        add_grid(grid1, temp);
-        print_grid(grid1);
+/**
+ * sandpiles_sum - Calcule la somme de deux tas de sable
+ * @grid1: Première grille (modifiée en place)
+ * @grid2: Deuxième grille
+ */
+void sandpiles_sum(int grid1[3][3], int grid2[3][3])
+{
+	int i, j;
 
-    }
+	/* Ajouter les deux grilles (grid1 et grid2) */
+	for (i = 0; i < 3; i++)
+		for (j = 0; j < 3; j++)
+			grid1[i][j] += grid2[i][j];
+
+	/* Tant que la grille n'est pas stable, continuer à la stabiliser */
+	while (!is_stable(grid1))
+	{
+		print_grid(grid1);
+		topple(grid1);
+	}
 }
