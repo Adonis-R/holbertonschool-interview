@@ -1,9 +1,8 @@
+#!/usr/bin/python3
 """
 Module for calculating how much water will be retained after it rains,
 given a list of wall heights.
 """
-
-# !/usr/bin/python3
 
 
 def rain(walls):
