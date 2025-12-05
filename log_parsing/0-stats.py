@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 """
-Reads stdin line by line and computes metrics for log parsing.
+Reads stdin line by line and computes metrics for log parsings.
 """
 
 import sys
