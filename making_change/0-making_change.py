@@ -1,35 +1,21 @@
 #!/usr/bin/python3
 """
-Module for making change with the minimum number of coins.
+Determines the fewest number of coins needed to meet a given total.
 """
 
 
-def make_change(coins, total):
+def makeChange(coins, total):
     """
-    Determine the fewest number of coins needed to meet a given amount total.
-    
-    Args:
-        coins (list): A list of the values of the coins in your possession
-        total (int): The total amount to make change for
-    
-    Returns:
-        int: The fewest number of coins needed to meet total,
-             or -1 if total cannot be met by any number of coins
+    Determine the fewest number of coins needed to meet a given total.
     """
     if total <= 0:
         return 0
-    if not coins:
-        return -1
-    
-    sorted_coins = sorted(coins, reverse=True)
-    coins_count = 0
 
-    for coin in sorted_coins:
-        if total >= coin:
-            count = total // coin
-            coins_count += count
-            total -= count * coin
-            if total == 0:
-                return coins_count
+    dp = [float('inf')] * (total + 1)
+    dp[0] = 0
 
-    return -1
+    for coin in coins:
+        for amount in range(coin, total + 1):
+            dp[amount] = min(dp[amount], dp[amount - coin] + 1)
+
+    return dp[total] if dp[total] != float('inf') else -1

@@ -2,14 +2,15 @@
 #include "sandpiles.h"
 
 /**
- * print_grid - Affiche une grille 3x3
- * @grid: La grille 3x3
+ * print_grid - Prints a 3x3 grid
+ * @grid: The grid to print
  */
 static void print_grid(int grid[3][3])
 {
 	int i, j;
 
 	printf("=\n");
+
 	for (i = 0; i < 3; i++)
 	{
 		for (j = 0; j < 3; j++)
@@ -23,34 +24,30 @@ static void print_grid(int grid[3][3])
 }
 
 /**
- * is_stable - Vérifie si une grille est stable
- * @grid: La grille 3x3
- *
- * Return: 1 si stable, 0 sinon
+ * is_stable - Checks if a sandpile is stable
+ * @grid: The sandpile to check
+ * Return: 1 if stable, 0 otherwise
  */
 static int is_stable(int grid[3][3])
 {
 	int i, j;
 
 	for (i = 0; i < 3; i++)
-	{
 		for (j = 0; j < 3; j++)
-		{
 			if (grid[i][j] > 3)
 				return (0);
-		}
-	}
+
 	return (1);
 }
 
 /**
- * topple - Répartit les grains de sable
- * @grid: La grille 3x3
+ * topple - Topples a sandpile
+ * @grid: The sandpile to topple
  */
 static void topple(int grid[3][3])
 {
 	int i, j;
-	int grid_tmp[3][3] = {0};
+	int temp[3][3] = {0};
 
 	for (i = 0; i < 3; i++)
 	{
@@ -58,39 +55,37 @@ static void topple(int grid[3][3])
 		{
 			if (grid[i][j] > 3)
 			{
-				grid_tmp[i][j] -= 4; // Enlever 4 grains de sable
+				temp[i][j] -= 4;
 				if (i > 0)
-					grid_tmp[i - 1][j]++;
+					temp[i - 1][j]++;
 				if (i < 2)
-					grid_tmp[i + 1][j]++;
+					temp[i + 1][j]++;
 				if (j > 0)
-					grid_tmp[i][j - 1]++;
+					temp[i][j - 1]++;
 				if (j < 2)
-					grid_tmp[i][j + 1]++;
+					temp[i][j + 1]++;
 			}
 		}
 	}
 
 	for (i = 0; i < 3; i++)
 		for (j = 0; j < 3; j++)
-			grid[i][j] += grid_tmp[i][j];
+			grid[i][j] += temp[i][j];
 }
 
 /**
- * sandpiles_sum - Calcule la somme de deux tas de sable
- * @grid1: Première grille (modifiée en place)
- * @grid2: Deuxième grille
+ * sandpiles_sum - Computes the sum of two sandpiles and stabilizes the result
+ * @grid1: First sandpile
+ * @grid2: Second sandpile
  */
 void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 {
 	int i, j;
 
-	/* Ajouter les deux grilles (grid1 et grid2) */
 	for (i = 0; i < 3; i++)
 		for (j = 0; j < 3; j++)
 			grid1[i][j] += grid2[i][j];
 
-	/* Tant que la grille n'est pas stable, continuer à la stabiliser */
 	while (!is_stable(grid1))
 	{
 		print_grid(grid1);
