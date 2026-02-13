@@ -1,60 +1,61 @@
 #!/usr/bin/python3
+"""N Queens puzzle solver.
 
+Usage: nqueens N
 """
-Module that solves the N Queens problem using backtracking.
-"""
-
 import sys
 
 
-def is_safe(board, row, col):
-    """
-    Check if placing a queen at (row, col) is safe.
-    """
+def solve_nqueens(n):
+    """Generate all solutions for N-Queens as lists of [row, col] pairs."""
+    cols = set()
+    pos_diag = set()  # r + c
+    neg_diag = set()  # r - c
+    board = [0] * n
+    solutions = []
 
-    for r, c in board:
-        if c == col or r + c == row + col or r - c == row - col:
-            return False
+    def backtrack(r=0):
+        if r == n:
+            sol = [[i, board[i]] for i in range(n)]
+            solutions.append(sol)
+            return
 
-    return True
+        for c in range(n):
+            if c in cols or (r + c) in pos_diag or (r - c) in neg_diag:
+                continue
+            cols.add(c)
+            pos_diag.add(r + c)
+            neg_diag.add(r - c)
+            board[r] = c
 
+            backtrack(r + 1)
 
-def solve_nqueens(N, board=None, row=0):
-    """Backtracking solution for N Queens."""
+            cols.remove(c)
+            pos_diag.remove(r + c)
+            neg_diag.remove(r - c)
 
-    if board is None:
-        board = []
-
-    if row == N:
-        print([[r, c] for r, c in board])
-        return
-
-    for col in range(N):
-        if is_safe(board, row, col):
-            solve_nqueens(N, board + [[row, col]], row + 1)
+    backtrack(0)
+    return solutions
 
 
 def main():
-    """
-    Parse command-line arguments and solve the N Queens problem.
-    """
-
     if len(sys.argv) != 2:
         print("Usage: nqueens N")
         sys.exit(1)
 
     try:
-        N = int(sys.argv[1])
-    except ValueError:
+        n = int(sys.argv[1])
+    except Exception:
         print("N must be a number")
         sys.exit(1)
 
-    if N < 4:
+    if n < 4:
         print("N must be at least 4")
         sys.exit(1)
 
-    solve_nqueens(N)
+    for sol in solve_nqueens(n):
+        print(sol)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
