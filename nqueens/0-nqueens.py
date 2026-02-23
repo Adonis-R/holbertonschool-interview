@@ -1,38 +1,45 @@
 #!/usr/bin/python3
-"""N Queens puzzle solver.
+"""N queens problem solver.
 
 Usage: nqueens N
+
+Prints all possible solutions for an N x N board.
+Only the `sys` module is used as required.
 """
+
 import sys
 
 
 def solve_nqueens(n):
-    """Generate all solutions for N-Queens as lists of [row, col] pairs."""
+    """Generate all solutions for the N-Queens problem.
+
+    Each solution is a list of [row, col] pairs.
+    """
     cols = set()
-    pos_diag = set()  # r + c
-    neg_diag = set()  # r - c
-    board = [0] * n
+    diag1 = set()  # row - col
+    diag2 = set()  # row + col
+    board = []
     solutions = []
 
-    def backtrack(r=0):
-        if r == n:
-            sol = [[i, board[i]] for i in range(n)]
-            solutions.append(sol)
+    def backtrack(row):
+        if row == n:
+            solutions.append([[r, c] for r, c in board])
             return
 
-        for c in range(n):
-            if c in cols or (r + c) in pos_diag or (r - c) in neg_diag:
+        for col in range(n):
+            if col in cols or (row - col) in diag1 or (row + col) in diag2:
                 continue
-            cols.add(c)
-            pos_diag.add(r + c)
-            neg_diag.add(r - c)
-            board[r] = c
+            cols.add(col)
+            diag1.add(row - col)
+            diag2.add(row + col)
+            board.append((row, col))
 
-            backtrack(r + 1)
+            backtrack(row + 1)
 
-            cols.remove(c)
-            pos_diag.remove(r + c)
-            neg_diag.remove(r - c)
+            board.pop()
+            cols.remove(col)
+            diag1.remove(row - col)
+            diag2.remove(row + col)
 
     backtrack(0)
     return solutions
@@ -43,8 +50,9 @@ def main():
         print("Usage: nqueens N")
         sys.exit(1)
 
+    arg = sys.argv[1]
     try:
-        n = int(sys.argv[1])
+        n = int(arg)
     except Exception:
         print("N must be a number")
         sys.exit(1)
@@ -57,5 +65,6 @@ def main():
         print(sol)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
+
